@@ -1,7 +1,5 @@
 require("dotenv").config();
 
-// ...
-
 const express = require("express");
 
 const app = express();
@@ -26,6 +24,7 @@ app.get("/api/users", users.getUser);
 app.get("/api/users/:id", users.getUserById);
 app.post("/api/movies", movieHandlers.postMovie);
 app.post("/api/users", users.getNewUser);
+app.put("/api/users/:id", users.updateUser);
 
 
 
@@ -37,5 +36,4 @@ app.listen(port, (err) => {
     }
 });
 
-// in app.js
 
