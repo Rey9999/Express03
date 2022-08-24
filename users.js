@@ -101,10 +101,23 @@ const deleteUser = (req, res) => {
         });
 };
 
+const validateUser = (req, res, next) => {
+    const { firstname, lastname, email } = req.body;
+
+    const { error } = userSchema.validate({ firstname, lastname, email }, { abortEarly: false });
+
+    if (error) {
+        res.status(422).json({ validationErrors: error.details });
+    } else {
+        next();
+    }
+};
+
 module.exports = {
     getUser,
     getUserById,
     getNewUser,
     updateUser,
     deleteUser,
+    validateUser
 };

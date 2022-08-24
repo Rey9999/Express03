@@ -4,7 +4,7 @@ const express = require("express");
 
 const app = express();
 
-app.use(express.json()); 
+app.use(express.json());
 
 const port = process.env.APP_PORT ?? 5000;
 
@@ -17,15 +17,18 @@ app.get("/", welcome);
 const movieHandlers = require("./movieHandlers");
 const users = require("./users")
 
-
+const { validateMovie } = require("./validator");
+const {validateUser} = require("./validator")
+app.post("/api/movies", validateMovie, movieHandlers.postMovie);
 app.get("/api/movies", movieHandlers.getMovies);
 app.get("/api/movies/:id", movieHandlers.getMovieById);
 app.get("/api/users", users.getUser);
 app.get("/api/users/:id", users.getUserById);
-app.post("/api/movies", movieHandlers.postMovie);
-app.post("/api/users", users.getNewUser);
-app.put("/api/users/:id", users.updateUser);
+app.post("/api/users", validateUser, users.getNewUser);
+app.put("/api/users/:id", validateUser, users.updateUser);
+app.put("/api/movies/:id", validateMovie, movieHandlers.getMovies);
 app.delete("/api/users/:id", users.deleteUser);
+
 
 
 
@@ -36,5 +39,3 @@ app.listen(port, (err) => {
         console.log(`Server is listening on ${port}`);
     }
 });
-
-
