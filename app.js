@@ -24,10 +24,12 @@ app.get("/api/movies", movieHandlers.getMovies);
 app.get("/api/movies/:id", movieHandlers.getMovieById);
 app.get("/api/users", users.getUser);
 app.get("/api/users/:id", users.getUserById);
-app.post("/api/users", validateUser, users.getNewUser);
+// app.post("/api/users", validateUser, users.getNewUser);
 app.put("/api/users/:id", validateUser, users.updateUser);
 app.put("/api/movies/:id", validateMovie, movieHandlers.getMovies);
 app.delete("/api/users/:id", users.deleteUser);
+const { hashPassword } = require("./auth.js");
+app.post("/api/users", validateUser, hashPassword, users.getNewUser);
 
 
 

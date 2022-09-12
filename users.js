@@ -1,7 +1,7 @@
 const database = require("./database");
 
 const getUser = (req, res) => {
-    let sql = "select * from users";
+    let sql = "select id,firstname, lastname, email, city, language from users";
     const sqlValues = [];
 
     if (req.query.language != null) {
@@ -46,11 +46,11 @@ const getUserById = (req, res) => {
 };
 
 const getNewUser = (req, res) => {
-    const { firstname, lastname, email, city, language } = req.body;
+    const { firstname, lastname, email, city, language, hashedPassword } = req.body;
 
     database
         .query(
-            "INSERT INTO users(firstname, lastname, email, city, language) VALUES (?, ?, ?, ?, ?)", [firstname, lastname, email, city, language]
+            "INSERT INTO users(firstname, lastname, email, city, language, hashedPassword) VALUES (?, ?, ?, ?, ?, ?)", [firstname, lastname, email, city, language, hashedPassword]
         )
         .then(([result]) => {
             res.location(`/api/users/${result.insertId}`).sendStatus(201);
@@ -101,17 +101,6 @@ const deleteUser = (req, res) => {
         });
 };
 
-const validateUser = (req, res, next) => {
-    const { firstname, lastname, email } = req.body;
-
-    const { error } = userSchema.validate({ firstname, lastname, email }, { abortEarly: false });
-
-    if (error) {
-        res.status(422).json({ validationErrors: error.details });
-    } else {
-        next();
-    }
-};
 
 module.exports = {
     getUser,
@@ -119,5 +108,5 @@ module.exports = {
     getNewUser,
     updateUser,
     deleteUser,
-    validateUser
+
 };
