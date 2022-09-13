@@ -16,22 +16,31 @@ app.get("/", welcome);
 
 const movieHandlers = require("./movieHandlers");
 const users = require("./users")
+const { hashPassword, verifyPassword, verifyToken } = require("./auth");
+
+
 
 const { validateMovie } = require("./validator");
 const {validateUser} = require("./validator")
-app.post("/api/movies", validateMovie, movieHandlers.postMovie);
+// app.post("/api/movies", validateMovie, movieHandlers.postMovie);
+
+// Routes publiques 
+
 app.get("/api/movies", movieHandlers.getMovies);
 app.get("/api/movies/:id", movieHandlers.getMovieById);
 app.get("/api/users", users.getUser);
 app.get("/api/users/:id", users.getUserById);
-// app.post("/api/users", validateUser, users.getNewUser);
 app.put("/api/users/:id", validateUser, users.updateUser);
+app.post("/api/users", validateUser, hashPassword, users.getNewUser);
+app.post("/api/login", users.getUserByEmailWithPasswordAndPassToNext, verifyPassword);
+
+// Routes sécurisées 
+
+// app.post("/api/users", validateUser, users.getNewUser);
+app.use(verifyToken);
 app.put("/api/movies/:id", validateMovie, movieHandlers.getMovies);
 app.delete("/api/users/:id", users.deleteUser);
-const { hashPassword } = require("./auth.js");
-app.post("/api/users", validateUser, hashPassword, users.getNewUser);
-
-
+app.post("/api/movies", movieHandlers.postMovie);
 
 
 app.listen(port, (err) => {

@@ -1,4 +1,6 @@
 const database = require("./database");
+const argon2 = require("argon2");
+const jwt = require("jsonwebtoken");
 
 const getUser = (req, res) => {
     let sql = "select id,firstname, lastname, email, city, language from users";
@@ -98,6 +100,28 @@ const deleteUser = (req, res) => {
         .catch((err) => {
             console.error(err);
             res.status(500).send("Error editing the user");
+
+        });
+};
+
+
+const getUserByEmailWithPasswordAndPassToNext = (req, res, next) => {
+    const { email } = req.body;
+
+    database
+        .query("select * from users where email = ?", [email])
+        .then(([users]) => {
+            if (users[0] != null) {
+                req.user = users[0];
+
+                next();
+            } else {
+                res.sendStatus(401);
+            }
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send("Error retrieving data from database");
         });
 };
 
@@ -108,5 +132,6 @@ module.exports = {
     getNewUser,
     updateUser,
     deleteUser,
+    getUserByEmailWithPasswordAndPassToNext,
 
 };
